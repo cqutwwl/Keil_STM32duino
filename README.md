@@ -1,19 +1,20 @@
 # Keil_STM32duino
 Compile and debug stm32dino using keil integrated development environment
+
 在Keil中编译、调试STM32Duino
 ## 1. 获取STM32duino源代码
 在Arduino IDE中添加ST官方库STM32duino
 如果使用Arduino IDE下载成功了STM32Duino的扩展包，则在C:\Users\youe user name\AppData\Local\Arduino15\packages下有本项目的全部代码和编译工具。
 ### 1.1 STM32duino扩展包文件内容
-在这个文件夹下有如下的路径
+在C:\Users\youe user name\AppData\Local\Arduino15\packages这个文件夹下有如下的路径
 ```
-STM32
+STM32                      
   --hardware
   --tools
 ```
 其中hardware文件夹下是项目的源代码，tools文件夹下是编译工具
 ```
-hardware
+hardware                    ;
    --stm32                  ;stm32文件夹
      --1.7.0                ;1.7.0版
        --CI                 ;命令行工具，暂时不使用
@@ -26,8 +27,8 @@ hardware
 我们新建一个文件夹stm32duino，将hardware，tools文件夹的全部内容复制这个文件夹下.再新建一个文件夹mdk，用于存放Keil的项目文件。再在这个文件夹下建立build文件夹，保存编译时产生的*.o,*.d文件.
 ```
 stm32duino
-  --hardware             ;复制
-  --tool                 ;复制
+  --hardware             ;copy as same from C:\Users\youe user name\AppData\Local\Arduino15\packages\STM32\hardware
+  --tools                ;copy as same from C:\Users\youe user name\AppData\Local\Arduino15\packages\STM32\tools
   --mdk                  ;新建文件夹保存MDK项目文件
     --build              ;新建文件夹保存编译时产生的obj，lst文件
 ```
@@ -99,7 +100,7 @@ Warnning中选择Level 1
 在Use Math Libraries前打勾。
 在Linker Script File中设置链接脚本，链接脚本在variants文件夹下的变种文件夹中，后文详述其需要修改的内容。
 在Misc Controls中输入-Wl,--gc-sections -Wl,--entry=Reset_Handler  -lstdc++
-## 4.STM32 MCU的变种文件
+## 4. STM32 MCU的变种文件
 意法半导体公司的基于ARM的MCU有很多的产品系列，从Cortex-M0到Cortex-M7等，1.7.0版本的stm32duino支持从STM32F0xx到STM32WBxx的共13个产品系列。所以有很多的MCU的变种系列。变种文件在variants文件夹下。1.7.0版的STM32duino共支持62个STM32 MCU的变种。
 
 MCU的变种文件有两个，分别是：
@@ -186,15 +187,16 @@ FLASH (rx)     : ORIGIN = 0x8000000 , LENGTH = 512K //这里做了修改
 ## 6.制作核心库文件core.lib
 在项目的Core文件组中有一个core.lib文件，这个文件是用Arduino IDE编译后获得的。
 
-在Arduino IDE中打开任意一个*.INO文件，设置好STM32 MCU 开发板的配置，点击Arduino的“验证”按钮编译stm32duino项目，编译成功后在*.elf,*.hex文件夹中，有一个core文件夹，在这个文件夹中有一个core.a文件，将这个文件拷贝到Keil的项目文件的文件夹下。（可以与应用程序在同一个文件夹下），并将其文件名改为core.lib。这样就有核心库文件了。
+在Arduino IDE中打开任意一个*.INO文件，设置好STM32 MCU 开发板的配置，点击Arduino的“验证”按钮编译stm32duino项目，编译成功后Arduino IDE会在C:\WINDOWS\TEMP\arduino_build_xxxxxx\core文件夹下生成一个core.a文件（xxxxxx是Arduino IDE编译器编译时随机产生的数字，可以在IDE的输出窗口中查看），将这个文件拷贝到Keil的项目文件的文件夹下。（可以与应用程序在同一个文件夹下），并将其文件名改为core.lib。这样就有核心库文件了。
 
 ## 7. 使用数学库
 
 需要进行数学计算，DSP处理时要将数学库添加到项目中，数学库在\tools\CMSIS\5.5.1\CMSIS\DSP\Lib\GCC文件夹中，由于STM32F1xx系列MCU是ARM的Cortex-M3内核，所以这个文件夹下的libarm_cortexM3l_math.a数学库文件，由于是在Keil中使用，所以要将这个库文件的扩展名改为libarm_cortexM3l_math.lib。
 
 ## 8. 编译调试
-按正常的Keil IDE的编译、调试流程即可。由于已经将很多的代码编译成了库core.lib，库文件core.lib不需要重新编译，所以项目的编译速度很快。缺点是不支持核心库部分的源代码调试。因为使用Keil集成开发环境，有这样的缺点也可以接受，核心库的代码是ST公司的专业程序员写的，不需要用户修改。总之，这样就可以使用专业的开发工具开发、调试Arduino的应用程序了。
+按正常的Keil IDE的编译、调试流程即可。由于已经将很多的代码编译成了库core.lib，库文件core.lib不需要重新编译，所以项目的编译速度很快。缺点是不支持核心库部分的源代码调试。因为使用Keil集成开发环境，有这样的缺点也可以接受，这样就可以使用专业的开发工具开发、调试Arduino的应用程序了。
 
 ## 9. 问题
 
-本文仅供嵌入式系统的初学者学习使用，使用本文制作的任何商业项目中出现任何问题本文作者概不负责。由于作者水平有限，项目难免存在各种问题。如果在使用过程中遇到的问题可以与提交本文作者讨论。以便使之更加完善。
+* 1. 没有按Keil的完整项目框架上传项目文件，请按照本文档说明自行建立Keil的项目。
+* 2. 本文仅供嵌入式系统的初学者学习使用，使用本文制作的任何商业项目中出现任何问题本文作者概不负责。由于作者水平有限，项目难免存在各种问题。如果在使用过程中遇到的问题可以与提交本文作者讨论。以便使之更加完善。
